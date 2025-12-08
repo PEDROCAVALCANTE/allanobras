@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AlertCircle, ArrowRight, Lock, User, CheckCircle } from 'lucide-react';
+import { AlertCircle, ArrowRight, Lock, User, CheckCircle, TrendingUp } from 'lucide-react';
 import { Logo } from './Logo';
 
 interface LoginProps {
@@ -55,7 +55,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
             Tenha controle total sobre custos, prazos e materiais em um único lugar. Simples, rápido e eficiente.
           </p>
           
-          <div className="space-y-4">
+          <div className="space-y-4 mb-12">
             {[
               "Controle Financeiro em Tempo Real",
               "Relatórios Automatizados",
@@ -66,6 +66,20 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 {item}
               </div>
             ))}
+          </div>
+
+          {/* Gatilho Mental / Social Proof Card */}
+          <div className="bg-white/10 backdrop-blur-md border border-white/10 p-5 rounded-2xl flex items-start gap-4 hover:bg-white/15 transition-colors cursor-default transform hover:-translate-y-1 duration-300">
+            <div className="bg-emerald-500/20 p-3 rounded-xl border border-emerald-500/30">
+              <TrendingUp className="w-6 h-6 text-emerald-400" />
+            </div>
+            <div>
+              <p className="text-white font-bold text-lg mb-1">Pare de perder dinheiro.</p>
+              <p className="text-slate-300 text-xs leading-relaxed max-w-xs">
+                Obras sem gestão têm <span className="text-white font-semibold">20% de desperdício</span> médio de materiais.
+                Transforme esse prejuízo em <span className="text-emerald-300 font-bold">lucro líquido</span> agora.
+              </p>
+            </div>
           </div>
         </div>
       </div>
