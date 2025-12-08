@@ -23,7 +23,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiReport, setAiReport] = useState<string | null>(null);
 
-  // Forms state (simplified for demo)
+  // Forms state
   const [showStageForm, setShowStageForm] = useState(false);
   const [showMaterialForm, setShowMaterialForm] = useState(false);
   const [showLaborForm, setShowLaborForm] = useState(false);
@@ -34,6 +34,62 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   const [newItemQty, setNewItemQty] = useState('');
   const [newItemUnit, setNewItemUnit] = useState('');
   const [selectedStageId, setSelectedStageId] = useState('');
+
+  // Validation State
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const validateInput = (field: string, value: string) => {
+    let error = '';
+    if (field === 'cost' || field === 'qty') {
+      if (value && parseFloat(value) <= 0) {
+        error = 'O valor deve ser maior que zero.';
+      }
+    }
+    if (field === 'name' && value.trim().length === 0) {
+       // Optional: validate name length while typing
+    }
+    setErrors(prev => ({ ...prev, [field]: error }));
+  };
+
+  const handleInputChange = (field: 'name' | 'cost' | 'qty' | 'unit' | 'stage', value: string) => {
+    // Clear required error for this field
+    if (errors[field]) {
+       setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+
+    if (field === 'name') setNewItemName(value);
+    if (field === 'cost') {
+      setNewItemCost(value);
+      validateInput('cost', value);
+    }
+    if (field === 'qty') {
+      setNewItemQty(value);
+      validateInput('qty', value);
+    }
+    if (field === 'unit') setNewItemUnit(value);
+    if (field === 'stage') setSelectedStageId(value);
+  };
+
+  const validateForm = (type: 'stage' | 'material' | 'labor') => {
+    const newErrors: { [key: string]: string } = {};
+    
+    if (!newItemName.trim()) newErrors.name = 'Campo obrigatório';
+    if (!newItemCost || parseFloat(newItemCost) <= 0) newErrors.cost = 'Valor inválido';
+
+    if (type === 'material') {
+      if (!selectedStageId) newErrors.stage = 'Selecione uma etapa';
+      if (!newItemQty || parseFloat(newItemQty) <= 0) newErrors.qty = 'Quantidade inválida';
+      if (!newItemUnit.trim()) newErrors.unit = 'Unidade obrigatória';
+    }
+
+    if (type === 'labor') {
+      if (!selectedStageId) newErrors.stage = 'Selecione uma etapa';
+      if (!newItemQty || parseFloat(newItemQty) <= 0) newErrors.qty = 'Horas inválidas';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handlePrint = () => {
     window.print();
@@ -54,6 +110,8 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
 
   const submitStage = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm('stage')) return;
+
     onAddStage({
       id: crypto.randomUUID(),
       projectId: project.id,
@@ -68,6 +126,8 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
 
   const submitMaterial = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm('material')) return;
+
     onAddMaterial({
       id: crypto.randomUUID(),
       stageId: selectedStageId,
@@ -83,13 +143,15 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
 
   const submitLabor = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm('labor')) return;
+
     onAddLabor({
       id: crypto.randomUUID(),
       stageId: selectedStageId,
-      role: newItemName, // Using name field as role for simplicity
+      role: newItemName, 
       workerName: 'Trabalhador',
       hourlyRate: parseFloat(newItemCost),
-      hoursWorked: parseFloat(newItemQty), // Using qty as hours
+      hoursWorked: parseFloat(newItemQty), 
       date: new Date().toISOString()
     });
     setShowLaborForm(false); resetInputs();
@@ -97,9 +159,17 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
 
   const resetInputs = () => {
     setNewItemName(''); setNewItemCost(''); setNewItemQty(''); setNewItemUnit(''); setSelectedStageId('');
+    setErrors({});
   };
 
   const formatCurrency = (val: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+
+  const getInputClass = (field: string) => 
+    `p-2 border rounded w-full outline-none focus:ring-2 transition-all ${
+      errors[field] 
+        ? 'border-red-300 focus:border-red-500 focus:ring-red-200 bg-red-50' 
+        : 'border-slate-300 focus:ring-blue-500'
+    }`;
 
   return (
     <div className="space-y-6">
@@ -169,19 +239,19 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
         <div className="border-b border-slate-200 mb-6 no-print">
           <nav className="flex gap-6">
             <button 
-              onClick={() => setActiveTab('overview')}
+              onClick={() => { setActiveTab('overview'); resetInputs(); }}
               className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'overview' ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
             >
               <Layers className="w-4 h-4" /> Etapas
             </button>
             <button 
-              onClick={() => setActiveTab('materials')}
+              onClick={() => { setActiveTab('materials'); resetInputs(); }}
               className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'materials' ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
             >
               <Package className="w-4 h-4" /> Materiais
             </button>
             <button 
-              onClick={() => setActiveTab('labor')}
+              onClick={() => { setActiveTab('labor'); resetInputs(); }}
               className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'labor' ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
             >
               <Users className="w-4 h-4" /> Mão de Obra
@@ -200,13 +270,30 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
               </div>
 
               {showStageForm && (
-                <form onSubmit={submitStage} className="bg-slate-50 p-4 rounded-lg mb-4 border border-slate-200">
+                <form onSubmit={submitStage} className="bg-slate-50 p-4 rounded-lg mb-4 border border-slate-200 animate-fade-in">
                   <div className="grid grid-cols-2 gap-4">
-                    <input required placeholder="Nome da Etapa" value={newItemName} onChange={e => setNewItemName(e.target.value)} className="p-2 border rounded" />
-                    <input required type="number" placeholder="Custo Previsto" value={newItemCost} onChange={e => setNewItemCost(e.target.value)} className="p-2 border rounded" />
+                    <div>
+                      <input 
+                        placeholder="Nome da Etapa" 
+                        value={newItemName} 
+                        onChange={e => handleInputChange('name', e.target.value)} 
+                        className={getInputClass('name')}
+                      />
+                      {errors.name && <span className="text-xs text-red-500">{errors.name}</span>}
+                    </div>
+                    <div>
+                      <input 
+                        type="number" 
+                        placeholder="Custo Previsto (R$)" 
+                        value={newItemCost} 
+                        onChange={e => handleInputChange('cost', e.target.value)} 
+                        className={getInputClass('cost')}
+                      />
+                      {errors.cost && <span className="text-xs text-red-500">{errors.cost}</span>}
+                    </div>
                   </div>
                   <div className="flex justify-end mt-3 gap-2">
-                    <button type="button" onClick={() => setShowStageForm(false)} className="text-sm text-slate-500">Cancelar</button>
+                    <button type="button" onClick={() => { setShowStageForm(false); resetInputs(); }} className="text-sm text-slate-500">Cancelar</button>
                     <button type="submit" className="text-sm bg-blue-600 text-white px-3 py-1 rounded">Salvar</button>
                   </div>
                 </form>
@@ -270,21 +357,65 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
               </div>
 
               {showMaterialForm && (
-                <form onSubmit={submitMaterial} className="bg-slate-50 p-4 rounded-lg mb-4 border border-slate-200">
+                <form onSubmit={submitMaterial} className="bg-slate-50 p-4 rounded-lg mb-4 border border-slate-200 animate-fade-in">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <select required value={selectedStageId} onChange={e => setSelectedStageId(e.target.value)} className="p-2 border rounded md:col-span-3">
-                      <option value="">Selecione a Etapa...</option>
-                      {stages.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                    </select>
-                    <input required placeholder="Material (ex: Cimento CP II)" value={newItemName} onChange={e => setNewItemName(e.target.value)} className="p-2 border rounded" />
-                    <input required placeholder="Unidade (ex: sc, m²)" value={newItemUnit} onChange={e => setNewItemUnit(e.target.value)} className="p-2 border rounded" />
+                    <div className="md:col-span-3">
+                      <select 
+                        value={selectedStageId} 
+                        onChange={e => handleInputChange('stage', e.target.value)} 
+                        className={getInputClass('stage')}
+                      >
+                        <option value="">Selecione a Etapa...</option>
+                        {stages.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                      </select>
+                      {errors.stage && <span className="text-xs text-red-500">{errors.stage}</span>}
+                    </div>
+                    
+                    <div>
+                      <input 
+                        placeholder="Material (ex: Cimento CP II)" 
+                        value={newItemName} 
+                        onChange={e => handleInputChange('name', e.target.value)} 
+                        className={getInputClass('name')}
+                      />
+                      {errors.name && <span className="text-xs text-red-500">{errors.name}</span>}
+                    </div>
+                    
+                    <div>
+                      <input 
+                        placeholder="Unidade (ex: sc, m²)" 
+                        value={newItemUnit} 
+                        onChange={e => handleInputChange('unit', e.target.value)} 
+                        className={getInputClass('unit')}
+                      />
+                      {errors.unit && <span className="text-xs text-red-500">{errors.unit}</span>}
+                    </div>
+
                     <div className="grid grid-cols-2 gap-2">
-                       <input required type="number" placeholder="Qtd" value={newItemQty} onChange={e => setNewItemQty(e.target.value)} className="p-2 border rounded" />
-                       <input required type="number" placeholder="Preço Unit." value={newItemCost} onChange={e => setNewItemCost(e.target.value)} className="p-2 border rounded" />
+                       <div>
+                         <input 
+                            type="number" 
+                            placeholder="Qtd" 
+                            value={newItemQty} 
+                            onChange={e => handleInputChange('qty', e.target.value)} 
+                            className={getInputClass('qty')}
+                         />
+                         {errors.qty && <span className="text-xs text-red-500">{errors.qty}</span>}
+                       </div>
+                       <div>
+                         <input 
+                            type="number" 
+                            placeholder="Preço Unit." 
+                            value={newItemCost} 
+                            onChange={e => handleInputChange('cost', e.target.value)} 
+                            className={getInputClass('cost')}
+                         />
+                         {errors.cost && <span className="text-xs text-red-500">{errors.cost}</span>}
+                       </div>
                     </div>
                   </div>
                   <div className="flex justify-end mt-3 gap-2">
-                    <button type="button" onClick={() => setShowMaterialForm(false)} className="text-sm text-slate-500">Cancelar</button>
+                    <button type="button" onClick={() => { setShowMaterialForm(false); resetInputs(); }} className="text-sm text-slate-500">Cancelar</button>
                     <button type="submit" className="text-sm bg-blue-600 text-white px-3 py-1 rounded">Salvar</button>
                   </div>
                 </form>
@@ -327,18 +458,54 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
               </div>
 
               {showLaborForm && (
-                <form onSubmit={submitLabor} className="bg-slate-50 p-4 rounded-lg mb-4 border border-slate-200">
+                <form onSubmit={submitLabor} className="bg-slate-50 p-4 rounded-lg mb-4 border border-slate-200 animate-fade-in">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <select required value={selectedStageId} onChange={e => setSelectedStageId(e.target.value)} className="p-2 border rounded md:col-span-3">
-                      <option value="">Selecione a Etapa...</option>
-                      {stages.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                    </select>
-                    <input required placeholder="Cargo/Função (ex: Pedreiro)" value={newItemName} onChange={e => setNewItemName(e.target.value)} className="p-2 border rounded" />
-                    <input required type="number" placeholder="Horas Trabalhadas" value={newItemQty} onChange={e => setNewItemQty(e.target.value)} className="p-2 border rounded" />
-                    <input required type="number" placeholder="Valor Hora" value={newItemCost} onChange={e => setNewItemCost(e.target.value)} className="p-2 border rounded" />
+                    <div className="md:col-span-3">
+                      <select 
+                        value={selectedStageId} 
+                        onChange={e => handleInputChange('stage', e.target.value)} 
+                        className={getInputClass('stage')}
+                      >
+                        <option value="">Selecione a Etapa...</option>
+                        {stages.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                      </select>
+                      {errors.stage && <span className="text-xs text-red-500">{errors.stage}</span>}
+                    </div>
+                    
+                    <div>
+                      <input 
+                        placeholder="Cargo/Função (ex: Pedreiro)" 
+                        value={newItemName} 
+                        onChange={e => handleInputChange('name', e.target.value)} 
+                        className={getInputClass('name')}
+                      />
+                      {errors.name && <span className="text-xs text-red-500">{errors.name}</span>}
+                    </div>
+
+                    <div>
+                      <input 
+                        type="number" 
+                        placeholder="Horas Trabalhadas" 
+                        value={newItemQty} 
+                        onChange={e => handleInputChange('qty', e.target.value)} 
+                        className={getInputClass('qty')}
+                      />
+                      {errors.qty && <span className="text-xs text-red-500">{errors.qty}</span>}
+                    </div>
+
+                    <div>
+                      <input 
+                        type="number" 
+                        placeholder="Valor Hora" 
+                        value={newItemCost} 
+                        onChange={e => handleInputChange('cost', e.target.value)} 
+                        className={getInputClass('cost')}
+                      />
+                      {errors.cost && <span className="text-xs text-red-500">{errors.cost}</span>}
+                    </div>
                   </div>
                   <div className="flex justify-end mt-3 gap-2">
-                    <button type="button" onClick={() => setShowLaborForm(false)} className="text-sm text-slate-500">Cancelar</button>
+                    <button type="button" onClick={() => { setShowLaborForm(false); resetInputs(); }} className="text-sm text-slate-500">Cancelar</button>
                     <button type="submit" className="text-sm bg-blue-600 text-white px-3 py-1 rounded">Salvar</button>
                   </div>
                 </form>

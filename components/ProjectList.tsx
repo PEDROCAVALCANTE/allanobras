@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Project, ProjectStatus } from '../types';
-import { Plus, ArrowRight, Calendar, MapPin, DollarSign, Trash2 } from 'lucide-react';
+import { Plus, ArrowRight, Calendar, MapPin, DollarSign, Trash2, AlertCircle } from 'lucide-react';
 
 interface ProjectListProps {
   projects: Project[];
@@ -19,8 +19,65 @@ export const ProjectList: React.FC<ProjectListProps> = ({ projects, onSelectProj
   const [budget, setBudget] = useState('');
   const [startDate, setStartDate] = useState('');
 
+  // Validation State
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const validateField = (field: string, value: string) => {
+    let newError = '';
+    
+    switch (field) {
+      case 'budget':
+        if (parseFloat(value) <= 0) newError = 'O orçamento deve ser maior que zero.';
+        break;
+      case 'name':
+        if (value.trim().length < 3) newError = 'Nome muito curto.';
+        break;
+      // Add more specific validations if needed
+    }
+
+    setErrors(prev => ({ ...prev, [field]: newError }));
+  };
+
+  const handleBlur = (field: string, value: string) => {
+    if (!value.trim()) {
+      setErrors(prev => ({ ...prev, [field]: 'Este campo é obrigatório.' }));
+    } else {
+      validateField(field, value);
+    }
+  };
+
+  const handleChange = (field: string, value: string) => {
+    // Clear required error immediately when typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+    
+    if (field === 'name') setName(value);
+    if (field === 'address') setAddress(value);
+    if (field === 'responsible') setResponsible(value);
+    if (field === 'budget') {
+      setBudget(value);
+      validateField('budget', value);
+    }
+    if (field === 'startDate') setStartDate(value);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Final Validation check before submit
+    const finalErrors: { [key: string]: string } = {};
+    if (!name.trim()) finalErrors.name = 'Nome é obrigatório';
+    if (!address.trim()) finalErrors.address = 'Endereço é obrigatório';
+    if (!responsible.trim()) finalErrors.responsible = 'Responsável é obrigatório';
+    if (!budget || parseFloat(budget) <= 0) finalErrors.budget = 'Orçamento inválido';
+    if (!startDate) finalErrors.startDate = 'Data é obrigatória';
+
+    if (Object.keys(finalErrors).length > 0) {
+      setErrors(finalErrors);
+      return;
+    }
+
     const newProject: Project = {
       id: crypto.randomUUID(),
       name,
@@ -39,10 +96,18 @@ export const ProjectList: React.FC<ProjectListProps> = ({ projects, onSelectProj
 
   const resetForm = () => {
     setName(''); setAddress(''); setResponsible(''); setBudget(''); setStartDate('');
+    setErrors({});
   };
 
   const formatCurrency = (val: number) => 
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+
+  const getInputClass = (field: string) => 
+    `w-full border rounded-md p-2 focus:ring-2 outline-none transition-all ${
+      errors[field] 
+        ? 'border-red-300 focus:border-red-500 focus:ring-red-200 bg-red-50' 
+        : 'border-slate-300 focus:ring-blue-500'
+    }`;
 
   return (
     <div className="space-y-6">
@@ -62,26 +127,63 @@ export const ProjectList: React.FC<ProjectListProps> = ({ projects, onSelectProj
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-slate-700 mb-1">Nome da Obra</label>
-              <input required type="text" value={name} onChange={e => setName(e.target.value)} className="w-full border border-slate-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Ex: Reforma Residencial Silva" />
+              <input 
+                type="text" 
+                value={name} 
+                onChange={e => handleChange('name', e.target.value)} 
+                onBlur={e => handleBlur('name', e.target.value)}
+                className={getInputClass('name')}
+                placeholder="Ex: Reforma Residencial Silva" 
+              />
+              {errors.name && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> {errors.name}</p>}
             </div>
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-slate-700 mb-1">Endereço</label>
-              <input required type="text" value={address} onChange={e => setAddress(e.target.value)} className="w-full border border-slate-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Rua das Flores, 123" />
+              <input 
+                type="text" 
+                value={address} 
+                onChange={e => handleChange('address', e.target.value)} 
+                onBlur={e => handleBlur('address', e.target.value)}
+                className={getInputClass('address')}
+                placeholder="Rua das Flores, 123" 
+              />
+              {errors.address && <p className="text-red-500 text-xs mt-1">{errors.address}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Responsável</label>
-              <input required type="text" value={responsible} onChange={e => setResponsible(e.target.value)} className="w-full border border-slate-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+              <input 
+                type="text" 
+                value={responsible} 
+                onChange={e => handleChange('responsible', e.target.value)} 
+                onBlur={e => handleBlur('responsible', e.target.value)}
+                className={getInputClass('responsible')}
+              />
+              {errors.responsible && <p className="text-red-500 text-xs mt-1">{errors.responsible}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Orçamento Total (R$)</label>
-              <input required type="number" value={budget} onChange={e => setBudget(e.target.value)} className="w-full border border-slate-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0.00" />
+              <input 
+                type="number" 
+                value={budget} 
+                onChange={e => handleChange('budget', e.target.value)} 
+                className={getInputClass('budget')}
+                placeholder="0.00" 
+              />
+              {errors.budget && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3"/> {errors.budget}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">Data Início</label>
-              <input required type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full border border-slate-300 rounded-md p-2 focus:ring-2 focus:ring-blue-500 outline-none" />
+              <input 
+                type="date" 
+                value={startDate} 
+                onChange={e => handleChange('startDate', e.target.value)} 
+                onBlur={e => handleBlur('startDate', e.target.value)}
+                className={getInputClass('startDate')}
+              />
+              {errors.startDate && <p className="text-red-500 text-xs mt-1">{errors.startDate}</p>}
             </div>
             <div className="md:col-span-2 flex justify-end gap-2 mt-2">
-              <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">Cancelar</button>
+              <button type="button" onClick={() => { setShowForm(false); resetForm(); }} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-md">Cancelar</button>
               <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Salvar Obra</button>
             </div>
           </form>
