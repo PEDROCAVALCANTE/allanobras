@@ -102,6 +102,18 @@ function App() {
     }
   };
 
+  const handleDeleteMaterial = (id: string) => {
+    if (window.confirm('Tem certeza que deseja remover este material?')) {
+      setMaterials(prev => prev.filter(m => m.id !== id));
+    }
+  };
+
+  const handleDeleteLabor = (id: string) => {
+    if (window.confirm('Tem certeza que deseja remover este lançamento de mão de obra?')) {
+      setLabor(prev => prev.filter(l => l.id !== id));
+    }
+  };
+
   const handleLogout = () => {
     setIsLoggedIn(false);
     setView('dashboard');
@@ -175,6 +187,8 @@ function App() {
               onAddMaterial={handleAddMaterial}
               onAddLabor={handleAddLabor}
               onUpdateStageStatus={handleUpdateStageStatus}
+              onDeleteMaterial={handleDeleteMaterial}
+              onDeleteLabor={handleDeleteLabor}
             />
           ) : (
             <>

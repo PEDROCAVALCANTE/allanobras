@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Project, Stage, Material, Labor, ProjectFinancials, StageStatus } from '../types';
-import { ArrowLeft, Package, Users, Layers, TrendingDown, AlertCircle, Printer, BrainCircuit } from 'lucide-react';
+import { ArrowLeft, Package, Users, Layers, TrendingDown, AlertCircle, Printer, BrainCircuit, Trash2 } from 'lucide-react';
 import { analyzeProjectRisks } from '../services/gemini';
 
 interface ProjectDetailProps {
@@ -14,10 +14,12 @@ interface ProjectDetailProps {
   onAddMaterial: (m: Material) => void;
   onAddLabor: (l: Labor) => void;
   onUpdateStageStatus: (id: string, status: StageStatus) => void;
+  onDeleteMaterial: (id: string) => void;
+  onDeleteLabor: (id: string) => void;
 }
 
 export const ProjectDetail: React.FC<ProjectDetailProps> = ({ 
-  project, stages, materials, labor, financials, onBack, onAddStage, onAddMaterial, onAddLabor, onUpdateStageStatus 
+  project, stages, materials, labor, financials, onBack, onAddStage, onAddMaterial, onAddLabor, onUpdateStageStatus, onDeleteMaterial, onDeleteLabor
 }) => {
   const [activeTab, setActiveTab] = useState<'overview' | 'materials' | 'labor'>('overview');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -430,19 +432,29 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
                       <th className="px-4 py-3">Qtd</th>
                       <th className="px-4 py-3">Unit.</th>
                       <th className="px-4 py-3">Total</th>
+                      <th className="px-4 py-3 text-right">Ações</th>
                     </tr>
                   </thead>
                   <tbody>
                     {materials.map(m => (
-                      <tr key={m.id} className="border-b border-slate-100">
+                      <tr key={m.id} className="border-b border-slate-100 group">
                         <td className="px-4 py-3 font-medium text-slate-800">{m.name}</td>
                         <td className="px-4 py-3 text-slate-500">{stages.find(s => s.id === m.stageId)?.name || '-'}</td>
                         <td className="px-4 py-3">{m.quantity} {m.unit}</td>
                         <td className="px-4 py-3">{formatCurrency(m.unitPrice)}</td>
                         <td className="px-4 py-3 font-bold">{formatCurrency(m.quantity * m.unitPrice)}</td>
+                        <td className="px-4 py-3 text-right">
+                          <button 
+                            onClick={() => onDeleteMaterial(m.id)}
+                            className="text-slate-400 hover:text-red-500 transition-colors p-1"
+                            title="Excluir Material"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </td>
                       </tr>
                     ))}
-                    {materials.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-slate-400">Nenhum material lançado.</td></tr>}
+                    {materials.length === 0 && <tr><td colSpan={6} className="text-center py-8 text-slate-400">Nenhum material lançado.</td></tr>}
                   </tbody>
                 </table>
               </div>
@@ -520,19 +532,29 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
                       <th className="px-4 py-3">Horas</th>
                       <th className="px-4 py-3">Valor/h</th>
                       <th className="px-4 py-3">Total</th>
+                      <th className="px-4 py-3 text-right">Ações</th>
                     </tr>
                   </thead>
                   <tbody>
                     {labor.map(l => (
-                      <tr key={l.id} className="border-b border-slate-100">
+                      <tr key={l.id} className="border-b border-slate-100 group">
                         <td className="px-4 py-3 font-medium text-slate-800">{l.role}</td>
                         <td className="px-4 py-3 text-slate-500">{stages.find(s => s.id === l.stageId)?.name || '-'}</td>
                         <td className="px-4 py-3">{l.hoursWorked}h</td>
                         <td className="px-4 py-3">{formatCurrency(l.hourlyRate)}</td>
                         <td className="px-4 py-3 font-bold">{formatCurrency(l.hoursWorked * l.hourlyRate)}</td>
+                        <td className="px-4 py-3 text-right">
+                          <button 
+                            onClick={() => onDeleteLabor(l.id)}
+                            className="text-slate-400 hover:text-red-500 transition-colors p-1"
+                            title="Excluir Lançamento"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </td>
                       </tr>
                     ))}
-                    {labor.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-slate-400">Nenhum lançamento de mão de obra.</td></tr>}
+                    {labor.length === 0 && <tr><td colSpan={6} className="text-center py-8 text-slate-400">Nenhum lançamento de mão de obra.</td></tr>}
                   </tbody>
                 </table>
               </div>
