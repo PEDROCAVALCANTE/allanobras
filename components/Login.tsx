@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AlertCircle, ArrowRight, Lock, User, CheckCircle, HardHat } from 'lucide-react';
+import { AlertCircle, ArrowRight, Lock, User, CheckCircle } from 'lucide-react';
 import { Logo } from './Logo';
 
 interface LoginProps {
@@ -41,12 +41,12 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
         
         {/* Content */}
         <div className="relative z-10 p-16 max-w-xl text-white">
-          <div className="inline-flex items-center gap-3 bg-white/10 border border-white/20 px-5 py-2.5 rounded-full mb-8 backdrop-blur-md shadow-lg">
-             <div className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_rgba(52,211,153,0.5)]"></div>
-             <span className="text-sm font-semibold text-white tracking-wide">Sistema de Gestão v2.0</span>
+          <div className="inline-flex items-center gap-3 bg-white/10 border border-white/20 px-4 py-2 rounded-full mb-6 backdrop-blur-md shadow-lg">
+             <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_rgba(52,211,153,0.5)]"></div>
+             <span className="text-xs font-semibold text-white tracking-wide">Sistema de Gestão v2.0</span>
           </div>
           
-          <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight tracking-tight drop-shadow-sm">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 leading-tight tracking-tight drop-shadow-sm">
             Construa com <br />
             <span className="relative inline-block">
               <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-200">precisão</span>
@@ -54,20 +54,20 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
             </span>.
           </h2>
           
-          <p className="text-blue-100 text-lg mb-10 leading-relaxed font-light opacity-90 max-w-md">
-            A plataforma definitiva para engenheiros, construtoras e empreiteiros que buscam controle total sobre custos e prazos.
+          <p className="text-blue-100 text-base mb-8 leading-relaxed font-light opacity-90 max-w-md">
+            A plataforma definitiva para engenheiros e construtoras que buscam controle total sobre custos e prazos.
           </p>
           
-          <div className="grid grid-cols-2 gap-y-6 gap-x-4">
+          <div className="grid grid-cols-2 gap-y-4 gap-x-4">
             {[
               "Controle Financeiro",
               "Cronograma Físico",
               "Relatórios PDF",
               "Consultoria IA"
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 text-sm font-medium text-blue-50 group">
-                <div className="bg-blue-500/30 p-1.5 rounded-lg group-hover:bg-blue-400/50 transition-colors border border-blue-400/20">
-                  <CheckCircle className="w-4 h-4 text-sky-300" />
+              <div key={i} className="flex items-center gap-2 text-sm font-medium text-blue-50 group">
+                <div className="bg-blue-500/30 p-1 rounded-lg group-hover:bg-blue-400/50 transition-colors border border-blue-400/20">
+                  <CheckCircle className="w-3.5 h-3.5 text-sky-300" />
                 </div>
                 {item}
               </div>
@@ -77,42 +77,42 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
       </div>
 
       {/* Right Side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12 bg-gradient-to-br from-blue-50 via-white to-slate-100">
-        <div className="w-full max-w-md bg-white p-10 rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-white/50 relative overflow-hidden">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-white to-slate-100">
+        <div className="w-full max-w-[380px] bg-white p-8 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 relative overflow-hidden">
           
           {/* Decorative Top Line */}
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-600 via-sky-500 to-blue-600"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 via-sky-500 to-blue-600"></div>
 
-          <div className="text-center mb-10">
-            <div className="inline-flex justify-center items-center p-4 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 shadow-xl shadow-blue-900/10 mb-6 transform hover:scale-105 transition-transform duration-300">
-              <Logo className="w-12 h-12" />
+          <div className="text-center mb-8">
+            <div className="inline-flex justify-center items-center p-3 rounded-xl bg-gradient-to-br from-blue-600 to-blue-800 shadow-lg shadow-blue-900/10 mb-4 transform hover:scale-105 transition-transform duration-300">
+              <Logo className="w-10 h-10" />
             </div>
-            <h1 className="text-3xl font-bold text-slate-800 tracking-tight">Bem-vindo</h1>
-            <p className="mt-3 text-slate-500 text-sm">Acesse o painel administrativo para gerenciar suas obras.</p>
+            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Bem-vindo</h1>
+            <p className="mt-2 text-slate-500 text-xs">Acesse o painel administrativo.</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-lg text-sm flex items-center gap-3 animate-fade-in shadow-sm">
-                <AlertCircle className="w-5 h-5 shrink-0" />
+              <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-3 rounded-lg text-xs flex items-center gap-2 animate-fade-in shadow-sm">
+                <AlertCircle className="w-4 h-4 shrink-0" />
                 <span className="font-medium">{error}</span>
               </div>
             )}
             
-            <div className="space-y-5">
+            <div className="space-y-4">
               {/* User Input */}
               <div className="group">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Usuário</label>
-                <div className="relative flex items-center transition-all duration-300 transform group-focus-within:scale-[1.01] group-focus-within:shadow-md rounded-xl bg-slate-50 border border-slate-200 group-focus-within:border-blue-500 group-focus-within:bg-white overflow-hidden">
-                  <div className="h-full pl-4 pr-3 py-4 bg-slate-100 border-r border-slate-200 group-focus-within:bg-blue-50 group-focus-within:border-blue-100 transition-colors">
-                    <User className="h-5 w-5 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Usuário</label>
+                <div className="relative flex items-center transition-all duration-300 transform group-focus-within:scale-[1.01] group-focus-within:shadow-md rounded-lg bg-slate-50 border border-slate-200 group-focus-within:border-blue-500 group-focus-within:bg-white overflow-hidden">
+                  <div className="h-full pl-3 pr-2 py-3 bg-slate-100 border-r border-slate-200 group-focus-within:bg-blue-50 group-focus-within:border-blue-100 transition-colors">
+                    <User className="h-4 w-4 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
                   </div>
                   <input
                     type="text"
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="block w-full px-4 py-4 text-slate-700 bg-transparent placeholder-slate-400 focus:outline-none"
+                    className="block w-full px-3 py-3 text-sm text-slate-700 bg-transparent placeholder-slate-400 focus:outline-none"
                     placeholder="Digite seu usuário"
                     autoFocus
                   />
@@ -121,17 +121,17 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
               
               {/* Password Input */}
               <div className="group">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Senha</label>
-                <div className="relative flex items-center transition-all duration-300 transform group-focus-within:scale-[1.01] group-focus-within:shadow-md rounded-xl bg-slate-50 border border-slate-200 group-focus-within:border-blue-500 group-focus-within:bg-white overflow-hidden">
-                   <div className="h-full pl-4 pr-3 py-4 bg-slate-100 border-r border-slate-200 group-focus-within:bg-blue-50 group-focus-within:border-blue-100 transition-colors">
-                    <Lock className="h-5 w-5 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Senha</label>
+                <div className="relative flex items-center transition-all duration-300 transform group-focus-within:scale-[1.01] group-focus-within:shadow-md rounded-lg bg-slate-50 border border-slate-200 group-focus-within:border-blue-500 group-focus-within:bg-white overflow-hidden">
+                   <div className="h-full pl-3 pr-2 py-3 bg-slate-100 border-r border-slate-200 group-focus-within:bg-blue-50 group-focus-within:border-blue-100 transition-colors">
+                    <Lock className="h-4 w-4 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
                   </div>
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full px-4 py-4 text-slate-700 bg-transparent placeholder-slate-400 focus:outline-none"
+                    className="block w-full px-3 py-3 text-sm text-slate-700 bg-transparent placeholder-slate-400 focus:outline-none"
                     placeholder="••••••••"
                   />
                 </div>
@@ -141,23 +141,23 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full flex items-center justify-center gap-3 bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg shadow-blue-900/20 transform hover:-translate-y-1 hover:shadow-xl ${isLoading ? 'opacity-80 cursor-wait' : ''}`}
+              className={`w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 text-white font-bold py-3.5 rounded-xl transition-all duration-300 shadow-lg shadow-blue-900/20 transform hover:-translate-y-0.5 hover:shadow-xl text-sm ${isLoading ? 'opacity-80 cursor-wait' : ''}`}
             >
               {isLoading ? (
-                <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  <span>Entrar no Sistema</span>
-                  <div className="bg-white/20 p-1 rounded-full">
-                     <ArrowRight className="w-4 h-4" />
+                  <span>Entrar</span>
+                  <div className="bg-white/20 p-0.5 rounded-full">
+                     <ArrowRight className="w-3.5 h-3.5" />
                   </div>
                 </>
               )}
             </button>
           </form>
           
-          <div className="mt-8 text-center">
-            <p className="text-xs text-slate-400">© 2024 Alan Obras. Todos os direitos reservados.</p>
+          <div className="mt-6 text-center">
+            <p className="text-[10px] text-slate-400">© 2024 Alan Obras. Todos os direitos reservados.</p>
           </div>
         </div>
       </div>
