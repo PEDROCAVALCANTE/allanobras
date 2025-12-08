@@ -19,7 +19,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
     // Simulate network delay for better UX
     setTimeout(() => {
-      if (username === 'admin' && password === '123456') {
+      if ((username === 'admin' || username === 'allan') && password === '123456') {
         onLogin();
       } else {
         setError('Credenciais inválidas.');
