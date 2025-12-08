@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { Project, ProjectStatus } from '../types';
-import { Plus, ArrowRight, Calendar, MapPin, DollarSign } from 'lucide-react';
+import { Plus, ArrowRight, Calendar, MapPin, DollarSign, Trash2 } from 'lucide-react';
 
 interface ProjectListProps {
   projects: Project[];
   onSelectProject: (id: string) => void;
   onAddProject: (p: Project) => void;
+  onDeleteProject: (id: string) => void;
 }
 
-export const ProjectList: React.FC<ProjectListProps> = ({ projects, onSelectProject, onAddProject }) => {
+export const ProjectList: React.FC<ProjectListProps> = ({ projects, onSelectProject, onAddProject, onDeleteProject }) => {
   const [showForm, setShowForm] = useState(false);
   
   // Form State
@@ -92,33 +93,46 @@ export const ProjectList: React.FC<ProjectListProps> = ({ projects, onSelectProj
           <div 
             key={project.id} 
             onClick={() => onSelectProject(project.id)}
-            className="group bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-blue-300 transition-all cursor-pointer relative overflow-hidden"
+            className="group bg-white rounded-xl shadow-sm border border-slate-200 p-6 hover:shadow-md hover:border-blue-300 transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between h-full"
           >
             <div className="absolute top-0 left-0 w-1 h-full bg-blue-500 group-hover:bg-blue-600 transition-colors"></div>
-            <div className="flex justify-between items-start mb-4">
-              <h3 className="font-bold text-lg text-slate-800 group-hover:text-blue-700 transition-colors">{project.name}</h3>
-              <span className={`text-xs px-2 py-1 rounded-full font-medium 
-                ${project.status === ProjectStatus.IN_PROGRESS ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'}`}>
-                {project.status}
-              </span>
-            </div>
             
-            <div className="space-y-3 text-sm text-slate-600">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-slate-400" />
-                <span className="truncate">{project.address}</span>
+            <div>
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="font-bold text-lg text-slate-800 group-hover:text-blue-700 transition-colors">{project.name}</h3>
+                <span className={`text-xs px-2 py-1 rounded-full font-medium 
+                  ${project.status === ProjectStatus.IN_PROGRESS ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'}`}>
+                  {project.status}
+                </span>
               </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-slate-400" />
-                <span>Início: {new Date(project.startDate).toLocaleDateString('pt-BR')}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-slate-400" />
-                <span className="font-semibold text-slate-800">{formatCurrency(project.totalBudget)}</span>
+              
+              <div className="space-y-3 text-sm text-slate-600">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-slate-400" />
+                  <span className="truncate">{project.address}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-slate-400" />
+                  <span>Início: {new Date(project.startDate).toLocaleDateString('pt-BR')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <DollarSign className="w-4 h-4 text-slate-400" />
+                  <span className="font-semibold text-slate-800">{formatCurrency(project.totalBudget)}</span>
+                </div>
               </div>
             </div>
 
-            <div className="mt-6 flex justify-end">
+            <div className="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center">
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteProject(project.id);
+                }}
+                className="text-red-500 hover:text-red-700 text-sm font-medium flex items-center gap-2 px-2 py-1 hover:bg-red-50 rounded transition-colors"
+                title="Excluir Obra"
+              >
+                 <Trash2 className="w-4 h-4" /> <span className="hidden sm:inline">Excluir</span>
+              </button>
               <button className="text-blue-600 font-medium text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
                 Gerenciar <ArrowRight className="w-4 h-4" />
               </button>

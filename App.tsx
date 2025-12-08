@@ -87,6 +87,21 @@ function App() {
     setStages(stages.map(s => s.id === id ? { ...s, status } : s));
   };
 
+  const handleDeleteProject = (id: string) => {
+    if (window.confirm('Tem certeza que deseja excluir esta obra? Todos os dados relacionados serão perdidos.')) {
+      // Find stages to remove related materials and labor
+      const projectStageIds = stages.filter(s => s.projectId === id).map(s => s.id);
+      
+      // Remove project
+      setProjects(prev => prev.filter(p => p.id !== id));
+      
+      // Cleanup related data
+      setStages(prev => prev.filter(s => s.projectId !== id));
+      setMaterials(prev => prev.filter(m => !projectStageIds.includes(m.stageId)));
+      setLabor(prev => prev.filter(l => !projectStageIds.includes(l.stageId)));
+    }
+  };
+
   const handleLogout = () => {
     setIsLoggedIn(false);
     setView('dashboard');
@@ -169,6 +184,7 @@ function App() {
                   projects={projects} 
                   onSelectProject={setSelectedProjectId} 
                   onAddProject={handleAddProject} 
+                  onDeleteProject={handleDeleteProject}
                 />
               )}
             </>
