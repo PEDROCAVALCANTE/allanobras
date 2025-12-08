@@ -136,26 +136,26 @@ function App() {
           <div className="bg-white/10 p-2 rounded-lg">
             <Logo className="w-6 h-6" />
           </div>
-          <span className="font-bold text-xl tracking-tight text-white">Alan Obras</span>
+          <span className="font-bold text-xl tracking-tight text-white">Allan Obras</span>
         </div>
 
         <nav className="flex-1 px-4 py-4 space-y-2">
           <button 
             onClick={() => { setView('dashboard'); setSelectedProjectId(null); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${view === 'dashboard' && !selectedProjectId ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium ${view === 'dashboard' && !selectedProjectId ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`}
           >
             <LayoutDashboard className="w-5 h-5" /> Dashboard
           </button>
           <button 
             onClick={() => { setView('projects'); setSelectedProjectId(null); }}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${(view === 'projects' || selectedProjectId) ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium ${(view === 'projects' || selectedProjectId) ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`}
           >
             <Briefcase className="w-5 h-5" /> Minhas Obras
           </button>
         </nav>
 
         <div className="p-4 border-t border-slate-800">
-          <button onClick={handleLogout} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors w-full px-4 py-2">
+          <button onClick={handleLogout} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors w-full px-4 py-2 text-sm font-medium">
             <LogOut className="w-4 h-4" /> Sair
           </button>
         </div>
@@ -169,7 +169,7 @@ function App() {
              <div className="bg-slate-900 p-1.5 rounded-lg">
                 <Logo className="w-5 h-5" />
               </div>
-            <span className="font-bold text-slate-800">Alan Obras</span>
+            <span className="font-bold text-slate-800">Allan Obras</span>
           </div>
         </header>
 

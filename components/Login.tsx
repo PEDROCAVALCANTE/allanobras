@@ -34,41 +34,35 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
       <div className="hidden lg:flex lg:w-1/2 relative bg-blue-950 items-center justify-center overflow-hidden">
         {/* Background Image with Overlay */}
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity transform hover:scale-105 transition-transform duration-[20s]"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=2531&auto=format&fit=crop')" }}
+          className="absolute inset-0 bg-cover bg-center opacity-20 mix-blend-luminosity"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop')" }}
         ></div>
-        <div className="absolute inset-0 bg-gradient-to-tr from-blue-950 via-blue-900/90 to-blue-800/80" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-blue-950 via-blue-900/95 to-slate-900/90" />
         
         {/* Content */}
         <div className="relative z-10 p-16 max-w-xl text-white">
-          <div className="inline-flex items-center gap-3 bg-white/10 border border-white/20 px-4 py-2 rounded-full mb-6 backdrop-blur-md shadow-lg">
-             <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_rgba(52,211,153,0.5)]"></div>
-             <span className="text-xs font-semibold text-white tracking-wide">Sistema de Gestão v2.0</span>
+          <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-8 backdrop-blur-md">
+             <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]"></div>
+             <span className="text-[10px] uppercase font-bold tracking-widest text-slate-300">Gestão 2.0</span>
           </div>
           
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 leading-tight tracking-tight drop-shadow-sm">
-            Construa com <br />
-            <span className="relative inline-block">
-              <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-200">precisão</span>
-              <div className="absolute -bottom-2 left-0 w-full h-3 bg-blue-600/30 -skew-x-12"></div>
-            </span>.
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight tracking-tight">
+            Gestão de obras <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-white">sem complicações</span>.
           </h2>
           
-          <p className="text-blue-100 text-base mb-8 leading-relaxed font-light opacity-90 max-w-md">
-            A plataforma definitiva para engenheiros e construtoras que buscam controle total sobre custos e prazos.
+          <p className="text-slate-300 text-sm mb-10 leading-relaxed max-w-md">
+            Tenha controle total sobre custos, prazos e materiais em um único lugar. Simples, rápido e eficiente.
           </p>
           
-          <div className="grid grid-cols-2 gap-y-4 gap-x-4">
+          <div className="space-y-4">
             {[
-              "Controle Financeiro",
-              "Cronograma Físico",
-              "Relatórios PDF",
-              "Consultoria IA"
+              "Controle Financeiro em Tempo Real",
+              "Relatórios Automatizados",
+              "Gestão de Materiais e Mão de Obra"
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-2 text-sm font-medium text-blue-50 group">
-                <div className="bg-blue-500/30 p-1 rounded-lg group-hover:bg-blue-400/50 transition-colors border border-blue-400/20">
-                  <CheckCircle className="w-3.5 h-3.5 text-sky-300" />
-                </div>
+              <div key={i} className="flex items-center gap-3 text-sm font-medium text-slate-200">
+                <CheckCircle className="w-5 h-5 text-emerald-400" />
                 {item}
               </div>
             ))}
@@ -77,34 +71,30 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
       </div>
 
       {/* Right Side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 via-white to-slate-100">
-        <div className="w-full max-w-[380px] bg-white p-8 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 relative overflow-hidden">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 bg-white">
+        <div className="w-full max-w-[380px]">
           
-          {/* Decorative Top Line */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 via-sky-500 to-blue-600"></div>
-
-          <div className="text-center mb-8">
-            <div className="inline-flex justify-center items-center p-3 rounded-xl bg-gradient-to-br from-blue-600 to-blue-800 shadow-lg shadow-blue-900/10 mb-4 transform hover:scale-105 transition-transform duration-300">
-              <Logo className="w-10 h-10" />
+          <div className="text-center mb-10">
+            <div className="inline-flex justify-center items-center p-3 rounded-2xl bg-blue-50 mb-6">
+              <Logo className="w-8 h-8" />
             </div>
-            <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Bem-vindo</h1>
-            <p className="mt-2 text-slate-500 text-xs">Acesse o painel administrativo.</p>
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight mb-2">Seja Bem vindo Allan</h1>
+            <p className="text-slate-500 text-sm">Entre com suas credenciais para continuar.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-3 rounded-lg text-xs flex items-center gap-2 animate-fade-in shadow-sm">
+              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-xs flex items-center gap-2 animate-fade-in">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span className="font-medium">{error}</span>
               </div>
             )}
             
             <div className="space-y-4">
-              {/* User Input */}
-              <div className="group">
-                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Usuário</label>
-                <div className="relative flex items-center transition-all duration-300 transform group-focus-within:scale-[1.01] group-focus-within:shadow-md rounded-lg bg-slate-50 border border-slate-200 group-focus-within:border-blue-500 group-focus-within:bg-white overflow-hidden">
-                  <div className="h-full pl-3 pr-2 py-3 bg-slate-100 border-r border-slate-200 group-focus-within:bg-blue-50 group-focus-within:border-blue-100 transition-colors">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-slate-700">Usuário</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <User className="h-4 w-4 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
                   </div>
                   <input
@@ -112,18 +102,17 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                     required
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="block w-full px-3 py-3 text-sm text-slate-700 bg-transparent placeholder-slate-400 focus:outline-none"
+                    className="block w-full pl-10 pr-3 py-2.5 text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none placeholder-slate-400"
                     placeholder="Digite seu usuário"
                     autoFocus
                   />
                 </div>
               </div>
               
-              {/* Password Input */}
-              <div className="group">
-                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 ml-1">Senha</label>
-                <div className="relative flex items-center transition-all duration-300 transform group-focus-within:scale-[1.01] group-focus-within:shadow-md rounded-lg bg-slate-50 border border-slate-200 group-focus-within:border-blue-500 group-focus-within:bg-white overflow-hidden">
-                   <div className="h-full pl-3 pr-2 py-3 bg-slate-100 border-r border-slate-200 group-focus-within:bg-blue-50 group-focus-within:border-blue-100 transition-colors">
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-slate-700">Senha</label>
+                <div className="relative group">
+                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Lock className="h-4 w-4 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
                   </div>
                   <input
@@ -131,7 +120,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full px-3 py-3 text-sm text-slate-700 bg-transparent placeholder-slate-400 focus:outline-none"
+                    className="block w-full pl-10 pr-3 py-2.5 text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-500 transition-all outline-none placeholder-slate-400"
                     placeholder="••••••••"
                   />
                 </div>
@@ -141,23 +130,21 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-700 to-blue-900 hover:from-blue-800 hover:to-blue-950 text-white font-bold py-3.5 rounded-xl transition-all duration-300 shadow-lg shadow-blue-900/20 transform hover:-translate-y-0.5 hover:shadow-xl text-sm ${isLoading ? 'opacity-80 cursor-wait' : ''}`}
+              className={`w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md text-sm ${isLoading ? 'opacity-80 cursor-wait' : ''}`}
             >
               {isLoading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  <span>Entrar</span>
-                  <div className="bg-white/20 p-0.5 rounded-full">
-                     <ArrowRight className="w-3.5 h-3.5" />
-                  </div>
+                  <span>Entrar no Sistema</span>
+                  <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </form>
           
-          <div className="mt-6 text-center">
-            <p className="text-[10px] text-slate-400">© 2024 Alan Obras. Todos os direitos reservados.</p>
+          <div className="mt-8 text-center border-t border-slate-100 pt-6">
+            <p className="text-xs text-slate-400">© 2024 Allan Obras. Todos os direitos reservados.</p>
           </div>
         </div>
       </div>
