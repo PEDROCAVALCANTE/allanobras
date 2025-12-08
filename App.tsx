@@ -4,7 +4,8 @@ import { Login } from './components/Login';
 import { Dashboard } from './components/Dashboard';
 import { ProjectList } from './components/ProjectList';
 import { ProjectDetail } from './components/ProjectDetail';
-import { HardHat, LayoutDashboard, Briefcase, Menu, X, LogOut } from 'lucide-react';
+import { LayoutDashboard, Briefcase, Menu, X, LogOut } from 'lucide-react';
+import { Logo } from './components/Logo';
 
 // --- MOCK DATA INITIALIZATION ---
 const MOCK_PROJECTS: Project[] = [
@@ -106,10 +107,10 @@ function App() {
       {/* Sidebar (Desktop) */}
       <aside className="hidden md:flex flex-col w-64 bg-slate-900 text-slate-300">
         <div className="p-6 flex items-center gap-3 text-white">
-          <div className="bg-blue-600 p-2 rounded-lg">
-            <HardHat className="w-6 h-6" />
+          <div className="bg-white/10 p-2 rounded-lg">
+            <Logo className="w-6 h-6" />
           </div>
-          <span className="font-bold text-xl tracking-tight">allanobras</span>
+          <span className="font-bold text-xl tracking-tight text-white">Alan Obras</span>
         </div>
 
         <nav className="flex-1 px-4 py-4 space-y-2">
@@ -139,10 +140,10 @@ function App() {
         {/* Mobile Header */}
         <header className="md:hidden bg-white border-b border-slate-200 p-4 flex justify-between items-center z-20 shadow-sm">
           <div className="flex items-center gap-2">
-             <div className="bg-blue-600 p-1.5 rounded-lg">
-                <HardHat className="w-5 h-5 text-white" />
+             <div className="bg-slate-900 p-1.5 rounded-lg">
+                <Logo className="w-5 h-5" />
               </div>
-            <span className="font-bold text-slate-800">allanobras</span>
+            <span className="font-bold text-slate-800">Alan Obras</span>
           </div>
           <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-slate-600">
             {mobileMenuOpen ? <X /> : <Menu />}
