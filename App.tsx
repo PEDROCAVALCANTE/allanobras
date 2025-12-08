@@ -4,7 +4,7 @@ import { Login } from './components/Login';
 import { Dashboard } from './components/Dashboard';
 import { ProjectList } from './components/ProjectList';
 import { ProjectDetail } from './components/ProjectDetail';
-import { LayoutDashboard, Briefcase, Menu, X, LogOut } from 'lucide-react';
+import { LayoutDashboard, Briefcase, LogOut } from 'lucide-react';
 import { Logo } from './components/Logo';
 
 // --- MOCK DATA INITIALIZATION ---
@@ -34,7 +34,6 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [view, setView] = useState<'dashboard' | 'projects'>('dashboard');
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // App State (In-Memory Database)
   const [projects, setProjects] = useState<Project[]>(MOCK_PROJECTS);
@@ -136,31 +135,19 @@ function App() {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
+      <div className="flex-1 flex flex-col h-full overflow-hidden relative">
         {/* Mobile Header */}
-        <header className="md:hidden bg-white border-b border-slate-200 p-4 flex justify-between items-center z-20 shadow-sm">
+        <header className="md:hidden bg-white border-b border-slate-200 p-4 flex justify-between items-center z-20 shadow-sm sticky top-0">
           <div className="flex items-center gap-2">
              <div className="bg-slate-900 p-1.5 rounded-lg">
                 <Logo className="w-5 h-5" />
               </div>
             <span className="font-bold text-slate-800">Alan Obras</span>
           </div>
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-slate-600">
-            {mobileMenuOpen ? <X /> : <Menu />}
-          </button>
         </header>
 
-        {/* Mobile Menu Overlay */}
-        {mobileMenuOpen && (
-          <div className="md:hidden absolute top-16 left-0 w-full bg-white shadow-xl z-10 border-b border-slate-100 flex flex-col p-4 animate-in slide-in-from-top-5">
-            <button onClick={() => { setView('dashboard'); setSelectedProjectId(null); setMobileMenuOpen(false); }} className="p-3 text-left font-medium text-slate-700 hover:bg-slate-50 rounded-lg">Dashboard</button>
-            <button onClick={() => { setView('projects'); setSelectedProjectId(null); setMobileMenuOpen(false); }} className="p-3 text-left font-medium text-slate-700 hover:bg-slate-50 rounded-lg">Minhas Obras</button>
-            <button onClick={handleLogout} className="p-3 text-left font-medium text-red-600 hover:bg-red-50 rounded-lg mt-2 border-t border-slate-100">Sair</button>
-          </div>
-        )}
-
         {/* Scrollable Area */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth pb-24 md:pb-8">
           {selectedProjectId && activeProject ? (
             <ProjectDetail 
               project={activeProject}
@@ -187,6 +174,33 @@ function App() {
             </>
           )}
         </main>
+
+        {/* Bottom Navigation Bar (Mobile Only) */}
+        <div className="md:hidden absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around items-center p-2 z-30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+            <button 
+              onClick={() => { setView('dashboard'); setSelectedProjectId(null); }}
+              className={`flex flex-col items-center justify-center p-2 rounded-xl w-20 transition-all active:scale-95 ${view === 'dashboard' && !selectedProjectId ? 'text-blue-600 bg-blue-50' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              <LayoutDashboard className="w-6 h-6 mb-1" />
+              <span className="text-[10px] font-medium">Início</span>
+            </button>
+            
+            <button 
+              onClick={() => { setView('projects'); setSelectedProjectId(null); }}
+               className={`flex flex-col items-center justify-center p-2 rounded-xl w-20 transition-all active:scale-95 ${(view === 'projects' || selectedProjectId) ? 'text-blue-600 bg-blue-50' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+              <Briefcase className="w-6 h-6 mb-1" />
+              <span className="text-[10px] font-medium">Obras</span>
+            </button>
+
+            <button 
+              onClick={handleLogout}
+               className="flex flex-col items-center justify-center p-2 rounded-xl w-20 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all active:scale-95"
+            >
+              <LogOut className="w-6 h-6 mb-1" />
+              <span className="text-[10px] font-medium">Sair</span>
+            </button>
+        </div>
       </div>
     </div>
   );
