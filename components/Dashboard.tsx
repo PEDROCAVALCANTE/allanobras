@@ -155,6 +155,80 @@ export const Dashboard: React.FC<DashboardProps> = ({ projects, financials }) =>
           </div>
         </div>
       </div>
+
+      {/* Financial Status Table */}
+      <div className="bg-white p-6 rounded-xl shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-slate-100">
+        <h3 className="text-base font-semibold text-slate-800 mb-6">Saúde Financeira por Obra</h3>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-100">
+              <tr>
+                <th className="px-4 py-3 font-semibold">Obra</th>
+                <th className="px-4 py-3 font-semibold">Orçamento</th>
+                <th className="px-4 py-3 font-semibold">Gasto Total</th>
+                <th className="px-4 py-3 font-semibold">Utilização</th>
+                <th className="px-4 py-3 font-semibold text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {projects.map(project => {
+                const fin = financials[project.id] || { totalCost: 0, budgetUtilization: 0 };
+                const utilization = fin.budgetUtilization;
+                
+                let statusConfig = {
+                  label: 'Dentro do Orçamento',
+                  className: 'bg-emerald-100 text-emerald-700 border-emerald-200'
+                };
+                
+                if (utilization > 100) {
+                  statusConfig = {
+                    label: 'Estourou',
+                    className: 'bg-red-100 text-red-700 border-red-200'
+                  };
+                } else if (utilization > 80) {
+                  statusConfig = {
+                    label: 'Alerta',
+                    className: 'bg-amber-100 text-amber-700 border-amber-200'
+                  };
+                }
+
+                return (
+                  <tr key={project.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-4 py-3 font-medium text-slate-800">{project.name}</td>
+                    <td className="px-4 py-3 text-slate-600">{formatCurrency(project.totalBudget)}</td>
+                    <td className="px-4 py-3 text-slate-600">{formatCurrency(fin.totalCost)}</td>
+                    <td className="px-4 py-3">
+                      <div className="w-full max-w-[140px]">
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="font-medium">{utilization.toFixed(1)}%</span>
+                        </div>
+                        <div className="w-full bg-slate-100 rounded-full h-2">
+                          <div 
+                            className={`h-2 rounded-full ${utilization > 100 ? 'bg-red-500' : utilization > 80 ? 'bg-amber-500' : 'bg-emerald-500'}`} 
+                            style={{ width: `${Math.min(utilization, 100)}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusConfig.className}`}>
+                        {statusConfig.label}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+              {projects.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
+                    Nenhuma obra cadastrada para exibir status.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };

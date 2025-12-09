@@ -62,46 +62,19 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
           </div>
         </div>
 
-        {/* Bottom Image & Trigger Card */}
-        <div className="relative z-10 w-full max-w-md mt-auto flex flex-col items-center justify-end">
-          
-          {/* Mental Trigger Card - Floating */}
-          <div className="absolute top-10 -right-4 md:-right-8 z-20 bg-white/10 backdrop-blur-xl border border-white/20 p-4 rounded-2xl flex items-start gap-3 shadow-2xl max-w-[280px] hover:scale-105 transition-transform duration-300">
-            <div className="bg-emerald-500 p-2.5 rounded-xl shadow-lg shadow-emerald-500/20">
-              <TrendingUp className="w-5 h-5 text-white" />
+        {/* Bottom Content - Mental Trigger Card (No Image) */}
+        <div className="relative z-10 w-full max-w-lg mt-auto mb-20 px-12">
+           <div className="bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-2xl flex items-start gap-4 shadow-2xl hover:bg-white/15 transition-colors">
+            <div className="bg-emerald-500 p-3 rounded-xl shadow-lg shadow-emerald-500/20 shrink-0">
+              <TrendingUp className="w-6 h-6 text-white" />
             </div>
             <div>
-              <p className="text-white font-bold text-sm mb-1">Pare de perder dinheiro.</p>
-              <p className="text-blue-100 text-[11px] leading-relaxed">
+              <p className="text-white font-bold text-lg mb-1">Pare de perder dinheiro.</p>
+              <p className="text-blue-100 text-sm leading-relaxed">
                 Obras sem gestão têm <span className="text-white font-semibold">20% de desperdício</span>. 
                 Transforme isso em <span className="text-emerald-300 font-bold">lucro</span>.
               </p>
             </div>
-          </div>
-
-          {/* User Image Container */}
-          <div className="relative w-full flex justify-center">
-             {/* Glow effect behind head */}
-             <div className="absolute top-10 left-1/2 -translate-x-1/2 w-64 h-64 bg-blue-500/30 rounded-full blur-3xl"></div>
-             
-             {/* The Image - Hosted externally */}
-             <img 
-               src="https://iili.io/fR9CNII.jpg" 
-               alt="Allan - Gestor" 
-               className="relative z-10 w-auto h-[55vh] object-cover object-top mask-image-gradient"
-               style={{ 
-                 maskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)',
-                 WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)'
-               }}
-               onError={(e) => {
-                 // Fallback if image fails to load
-                 e.currentTarget.style.display = 'none';
-                 e.currentTarget.parentElement!.innerHTML += '<div class="text-white text-center pb-20 opacity-50">Erro ao carregar imagem</div>';
-               }}
-             />
-             
-             {/* Gradient Overlay to blend with bottom */}
-             <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-blue-950 to-transparent z-20"></div>
           </div>
         </div>
       </div>
