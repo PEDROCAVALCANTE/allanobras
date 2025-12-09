@@ -31,6 +31,15 @@ export enum ProjectStatus {
     hoursWorked: number;
     date: string;
   }
+
+  export interface Expense {
+    id: string;
+    projectId: string;
+    description: string;
+    category: string; // e.g., 'Aluguel', 'Taxas', 'Transporte'
+    amount: number;
+    date: string;
+  }
   
   export interface Stage {
     id: string;
@@ -65,6 +74,7 @@ export enum ProjectStatus {
   export interface ProjectFinancials {
     totalMaterials: number;
     totalLabor: number;
+    totalExpenses: number;
     totalCost: number;
     projectedProfit: number;
     realMargin: number;

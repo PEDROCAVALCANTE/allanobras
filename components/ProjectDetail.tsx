@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Project, Stage, Material, Labor, ProjectFinancials, StageStatus } from '../types';
-import { ArrowLeft, Package, Users, Layers, TrendingDown, AlertCircle, Printer, BrainCircuit, Trash2 } from 'lucide-react';
+import { Project, Stage, Material, Labor, ProjectFinancials, StageStatus, Expense } from '../types';
+import { ArrowLeft, Package, Users, Layers, TrendingDown, AlertCircle, Printer, BrainCircuit, Trash2, Receipt, Calendar } from 'lucide-react';
 import { analyzeProjectRisks } from '../services/gemini';
 
 interface ProjectDetailProps {
@@ -8,20 +8,23 @@ interface ProjectDetailProps {
   stages: Stage[];
   materials: Material[];
   labor: Labor[];
+  expenses: Expense[];
   financials: ProjectFinancials;
   onBack: () => void;
   onAddStage: (s: Stage) => void;
   onAddMaterial: (m: Material) => void;
   onAddLabor: (l: Labor) => void;
+  onAddExpense: (e: Expense) => void;
   onUpdateStageStatus: (id: string, status: StageStatus) => void;
   onDeleteMaterial: (id: string) => void;
   onDeleteLabor: (id: string) => void;
+  onDeleteExpense: (id: string) => void;
 }
 
 export const ProjectDetail: React.FC<ProjectDetailProps> = ({ 
-  project, stages, materials, labor, financials, onBack, onAddStage, onAddMaterial, onAddLabor, onUpdateStageStatus, onDeleteMaterial, onDeleteLabor
+  project, stages, materials, labor, expenses, financials, onBack, onAddStage, onAddMaterial, onAddLabor, onAddExpense, onUpdateStageStatus, onDeleteMaterial, onDeleteLabor, onDeleteExpense
 }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'materials' | 'labor'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'materials' | 'labor' | 'expenses'>('overview');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiReport, setAiReport] = useState<string | null>(null);
 
@@ -29,6 +32,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   const [showStageForm, setShowStageForm] = useState(false);
   const [showMaterialForm, setShowMaterialForm] = useState(false);
   const [showLaborForm, setShowLaborForm] = useState(false);
+  const [showExpenseForm, setShowExpenseForm] = useState(false);
   
   // Generic input state
   const [newItemName, setNewItemName] = useState('');
@@ -36,6 +40,11 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
   const [newItemQty, setNewItemQty] = useState('');
   const [newItemUnit, setNewItemUnit] = useState('');
   const [selectedStageId, setSelectedStageId] = useState('');
+  
+  // Expense specific input state
+  const [newExpenseDesc, setNewExpenseDesc] = useState('');
+  const [newExpenseCat, setNewExpenseCat] = useState('');
+  const [newExpenseDate, setNewExpenseDate] = useState('');
 
   // Validation State
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -72,11 +81,13 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
     if (field === 'stage') setSelectedStageId(value);
   };
 
-  const validateForm = (type: 'stage' | 'material' | 'labor') => {
+  const validateForm = (type: 'stage' | 'material' | 'labor' | 'expense') => {
     const newErrors: { [key: string]: string } = {};
     
-    if (!newItemName.trim()) newErrors.name = 'Campo obrigatório';
-    if (!newItemCost || parseFloat(newItemCost) <= 0) newErrors.cost = 'Valor inválido';
+    if (type !== 'expense') {
+      if (!newItemName.trim()) newErrors.name = 'Campo obrigatório';
+      if (!newItemCost || parseFloat(newItemCost) <= 0) newErrors.cost = 'Valor inválido';
+    }
 
     if (type === 'material') {
       if (!selectedStageId) newErrors.stage = 'Selecione uma etapa';
@@ -87,6 +98,13 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
     if (type === 'labor') {
       if (!selectedStageId) newErrors.stage = 'Selecione uma etapa';
       if (!newItemQty || parseFloat(newItemQty) <= 0) newErrors.qty = 'Horas inválidas';
+    }
+
+    if (type === 'expense') {
+      if (!newExpenseDesc.trim()) newErrors.desc = 'Descrição obrigatória';
+      if (!newExpenseCat) newErrors.cat = 'Categoria obrigatória';
+      if (!newItemCost || parseFloat(newItemCost) <= 0) newErrors.cost = 'Valor inválido';
+      if (!newExpenseDate) newErrors.date = 'Data obrigatória';
     }
 
     setErrors(newErrors);
@@ -159,8 +177,24 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
     setShowLaborForm(false); resetInputs();
   };
 
+  const submitExpense = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateForm('expense')) return;
+
+    onAddExpense({
+      id: crypto.randomUUID(),
+      projectId: project.id,
+      description: newExpenseDesc,
+      category: newExpenseCat,
+      amount: parseFloat(newItemCost),
+      date: newExpenseDate
+    });
+    setShowExpenseForm(false); resetInputs();
+  }
+
   const resetInputs = () => {
     setNewItemName(''); setNewItemCost(''); setNewItemQty(''); setNewItemUnit(''); setSelectedStageId('');
+    setNewExpenseDesc(''); setNewExpenseCat(''); setNewExpenseDate('');
     setErrors({});
   };
 
@@ -172,6 +206,8 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
         ? 'border-red-300 focus:border-red-500 focus:ring-red-200 bg-red-50' 
         : 'border-slate-300 focus:ring-blue-500'
     }`;
+
+  const expenseCategories = ['Taxas e Impostos', 'Aluguel de Equipamentos', 'Transporte e Frete', 'Alimentação', 'Projetos e Licenças', 'Outros'];
 
   return (
     <div className="space-y-6">
@@ -203,7 +239,7 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
         </div>
 
         {/* Financial Summary Bar */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-100">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-100">
           <div>
             <p className="text-xs font-semibold uppercase text-slate-400">Gasto Total</p>
             <p className={`text-lg font-bold ${financials.isRisk ? 'text-red-600' : 'text-slate-800'}`}>
@@ -217,6 +253,10 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
           <div>
              <p className="text-xs font-semibold uppercase text-slate-400">Mão de Obra</p>
              <p className="text-lg font-bold text-amber-600">{formatCurrency(financials.totalLabor)}</p>
+          </div>
+          <div>
+             <p className="text-xs font-semibold uppercase text-slate-400">Despesas</p>
+             <p className="text-lg font-bold text-purple-600">{formatCurrency(financials.totalExpenses)}</p>
           </div>
           <div>
              <p className="text-xs font-semibold uppercase text-slate-400">Saldo Restante</p>
@@ -238,8 +278,8 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
         )}
 
         {/* Tabs Navigation */}
-        <div className="border-b border-slate-200 mb-6 no-print">
-          <nav className="flex gap-6">
+        <div className="border-b border-slate-200 mb-6 no-print overflow-x-auto">
+          <nav className="flex gap-6 min-w-max">
             <button 
               onClick={() => { setActiveTab('overview'); resetInputs(); }}
               className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'overview' ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
@@ -257,6 +297,12 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
               className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'labor' ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
             >
               <Users className="w-4 h-4" /> Mão de Obra
+            </button>
+            <button 
+              onClick={() => { setActiveTab('expenses'); resetInputs(); }}
+              className={`pb-4 px-2 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'expenses' ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:text-slate-700'}`}
+            >
+              <Receipt className="w-4 h-4" /> Despesas
             </button>
           </nav>
         </div>
@@ -555,6 +601,106 @@ export const ProjectDetail: React.FC<ProjectDetailProps> = ({
                       </tr>
                     ))}
                     {labor.length === 0 && <tr><td colSpan={6} className="text-center py-8 text-slate-400">Nenhum lançamento de mão de obra.</td></tr>}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+           {/* EXPENSES TAB */}
+           {activeTab === 'expenses' && (
+            <div>
+               <div className="flex justify-between items-center mb-4 no-print">
+                <h3 className="font-semibold text-slate-700">Despesas Extras</h3>
+                <button onClick={() => setShowExpenseForm(true)} className="text-sm bg-blue-600 text-white px-3 py-1.5 rounded hover:bg-blue-700">+ Nova Despesa</button>
+              </div>
+
+              {showExpenseForm && (
+                <form onSubmit={submitExpense} className="bg-slate-50 p-4 rounded-lg mb-4 border border-slate-200 animate-fade-in">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="md:col-span-2">
+                      <input 
+                        placeholder="Descrição (ex: Taxa de Alvará)" 
+                        value={newExpenseDesc} 
+                        onChange={e => { setNewExpenseDesc(e.target.value); if(errors.desc) setErrors({...errors, desc: ''}); }} 
+                        className={getInputClass('desc')}
+                      />
+                      {errors.desc && <span className="text-xs text-red-500">{errors.desc}</span>}
+                    </div>
+
+                    <div>
+                      <select 
+                        value={newExpenseCat} 
+                        onChange={e => { setNewExpenseCat(e.target.value); if(errors.cat) setErrors({...errors, cat: ''}); }} 
+                        className={getInputClass('cat')}
+                      >
+                        <option value="">Selecione a Categoria...</option>
+                        {expenseCategories.map(c => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                      {errors.cat && <span className="text-xs text-red-500">{errors.cat}</span>}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                       <div>
+                         <input 
+                            type="number" 
+                            placeholder="Valor (R$)" 
+                            value={newItemCost} 
+                            onChange={e => handleInputChange('cost', e.target.value)} 
+                            className={getInputClass('cost')}
+                         />
+                         {errors.cost && <span className="text-xs text-red-500">{errors.cost}</span>}
+                       </div>
+                       <div>
+                         <input 
+                            type="date" 
+                            value={newExpenseDate} 
+                            onChange={e => { setNewExpenseDate(e.target.value); if(errors.date) setErrors({...errors, date: ''}); }} 
+                            className={getInputClass('date')}
+                         />
+                         {errors.date && <span className="text-xs text-red-500">{errors.date}</span>}
+                       </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-end mt-3 gap-2">
+                    <button type="button" onClick={() => { setShowExpenseForm(false); resetInputs(); }} className="text-sm text-slate-500">Cancelar</button>
+                    <button type="submit" className="text-sm bg-blue-600 text-white px-3 py-1 rounded">Salvar</button>
+                  </div>
+                </form>
+              )}
+
+               <div className="overflow-x-auto">
+                <table className="w-full text-sm text-left">
+                  <thead className="text-xs text-slate-500 uppercase bg-slate-50">
+                    <tr>
+                      <th className="px-4 py-3">Data</th>
+                      <th className="px-4 py-3">Descrição</th>
+                      <th className="px-4 py-3">Categoria</th>
+                      <th className="px-4 py-3">Valor</th>
+                      <th className="px-4 py-3 text-right">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {expenses.map(e => (
+                      <tr key={e.id} className="border-b border-slate-100 group">
+                         <td className="px-4 py-3 text-slate-500">{new Date(e.date).toLocaleDateString('pt-BR')}</td>
+                        <td className="px-4 py-3 font-medium text-slate-800">{e.description}</td>
+                        <td className="px-4 py-3">
+                          <span className="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-xs">{e.category}</span>
+                        </td>
+                        <td className="px-4 py-3 font-bold text-slate-700">{formatCurrency(e.amount)}</td>
+                        <td className="px-4 py-3 text-right">
+                          <button 
+                            onClick={() => onDeleteExpense(e.id)}
+                            className="text-slate-400 hover:text-red-500 transition-colors p-1"
+                            title="Excluir Despesa"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                    {expenses.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-slate-400">Nenhuma despesa extra lançada.</td></tr>}
                   </tbody>
                 </table>
               </div>
