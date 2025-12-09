@@ -84,9 +84,9 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
              {/* Glow effect behind head */}
              <div className="absolute top-10 left-1/2 -translate-x-1/2 w-64 h-64 bg-blue-500/30 rounded-full blur-3xl"></div>
              
-             {/* The Image - Needs to be in /public/allan.png */}
+             {/* The Image - Hosted externally */}
              <img 
-               src="/allan.png" 
+               src="https://iili.io/fR9CNII.jpg" 
                alt="Allan - Gestor" 
                className="relative z-10 w-auto h-[55vh] object-cover object-top mask-image-gradient"
                style={{ 
@@ -94,9 +94,9 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                  WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)'
                }}
                onError={(e) => {
-                 // Fallback if image is missing
+                 // Fallback if image fails to load
                  e.currentTarget.style.display = 'none';
-                 e.currentTarget.parentElement!.innerHTML += '<div class="text-white text-center pb-20 opacity-50">Imagem "allan.png" não encontrada na pasta public</div>';
+                 e.currentTarget.parentElement!.innerHTML += '<div class="text-white text-center pb-20 opacity-50">Erro ao carregar imagem</div>';
                }}
              />
              
@@ -160,8 +160,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-12 pr-3 py-3 text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-50/50 focus:border-blue-500 transition-all outline-none placeholder-slate-400"
-                    placeholder="••••••••"
+                    className="block w-full pl-12 pr-3 py-3 text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-blue-50/50 focus:border-blue-500 transition-all outline-none placeholder-••••••••"
                   />
                 </div>
               </div>
